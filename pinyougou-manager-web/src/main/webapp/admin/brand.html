@@ -27,6 +27,9 @@
     <script type="text/javascript" src="../js/controller/brandController.js"></script>
 </head>
 <body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="brandController">
+<b>entity:{{entity}}</b><br>
+<b>selectIds:{{selectIds}}</b>
+
 <!-- .box-body -->
 <div class="box-header with-border">
     <h3 class="box-title">品牌管理</h3>
@@ -76,6 +79,7 @@
             </thead>
             <tbody>
             <tr ng-repeat="entity in list">
+                <!--更新选择获取事件源-->
                 <td><input type="checkbox" ng-click="updateSelection($event,entity.id)"></td>
                 <td>{{entity.id}}</td>
                 <td>{{entity.name}}</td>

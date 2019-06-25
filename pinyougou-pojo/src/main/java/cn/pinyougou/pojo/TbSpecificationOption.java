@@ -1,6 +1,7 @@
 package cn.pinyougou.pojo;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class TbSpecificationOption implements Serializable {
     private Long id;
@@ -10,6 +11,7 @@ public class TbSpecificationOption implements Serializable {
     private Long specId;
 
     private Integer orders;
+
 
     public Long getId() {
         return id;
