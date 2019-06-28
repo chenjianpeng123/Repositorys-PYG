@@ -1,7 +1,12 @@
 package cn.pinyougou.sellergoods.service.impl;
 import java.util.List;
+import java.util.Map;
 
+import cn.pinyougou.mapper.TbTypeTemplateMapper;
 import cn.pinyougou.pojo.TbItemCatExample;
+import cn.pinyougou.pojo.TbTypeTemplate;
+import cn.pinyougou.pojo.TbTypeTemplateExample;
+import cn.pinyougou.pojogroup.ItemCat;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
@@ -22,7 +27,8 @@ public class ItemCatServiceImpl implements ItemCatService {
 
 	@Autowired
 	private TbItemCatMapper itemCatMapper;
-	
+    @Autowired
+	private TbTypeTemplateMapper tbTypeTemplateMapper;
 	/**
 	 * 查询全部
 	 */
@@ -45,8 +51,15 @@ public class ItemCatServiceImpl implements ItemCatService {
 	 * 增加
 	 */
 	@Override
-	public void add(TbItemCat itemCat) {
-		itemCatMapper.insert(itemCat);		
+	public void add(ItemCat itemCat) {
+		TbItemCat tbItemCat = new TbItemCat();
+		tbItemCat.setId(itemCat.getId());
+		tbItemCat.setName(itemCat.getName());
+		tbItemCat.setParentId(itemCat.getParentId());
+		tbItemCat.setTypeId(itemCat.getTypeTemplate().getId());
+		itemCatMapper.insert(tbItemCat);
+
+
 	}
 
 	
@@ -64,8 +77,14 @@ public class ItemCatServiceImpl implements ItemCatService {
 	 * @return
 	 */
 	@Override
-	public TbItemCat findOne(Long id){
-		return itemCatMapper.selectByPrimaryKey(id);
+	public ItemCat findOne(Long id){
+		TbItemCat tbItemCat = itemCatMapper.selectByPrimaryKey(id);
+		ItemCat itemCat = new ItemCat();
+		itemCat.setId(tbItemCat.getId());
+		itemCat.setName(tbItemCat.getName());
+		itemCat.setParentId(tbItemCat.getParentId());
+		itemCat.setTypeTemplate(tbTypeTemplateMapper.selectByPrimaryKey(tbItemCat.getTypeId()));
+		return itemCat;
 	}
 
 	/**
@@ -96,5 +115,20 @@ public class ItemCatServiceImpl implements ItemCatService {
 		Page<TbItemCat> page= (Page<TbItemCat>)itemCatMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
-	
+
+	/**
+	 * 根据上级id 查询列表
+	 * @param parentId
+	 * @return
+	 */
+	@Override
+	public List<TbItemCat> findByParentId(Long parentId) {
+		TbItemCatExample catExample = new TbItemCatExample();
+		TbItemCatExample.Criteria criteria = catExample.createCriteria();
+		criteria.andParentIdEqualTo(parentId);
+		return itemCatMapper.selectByExample(catExample);
+	}
+
+
+
 }

@@ -1,5 +1,6 @@
 package cn.pinyougou.sellergoods.service.impl;
 import java.util.List;
+import java.util.Map;
 
 import cn.pinyougou.pojo.TbTypeTemplateExample;
 import cn.pinyougou.sellergoods.service.TypeTemplateService;
@@ -107,5 +108,12 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 		Page<TbTypeTemplate> page= (Page<TbTypeTemplate>)typeTemplateMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
 	}
-	
+	/**
+	 * 下拉列表数据
+	 * @return
+	 */
+	@Override
+	public List<Map> selectTypetempList() {
+		return typeTemplateMapper.selectTypetempList();
+	}
 }

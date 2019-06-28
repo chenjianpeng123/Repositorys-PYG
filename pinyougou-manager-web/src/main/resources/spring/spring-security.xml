@@ -6,7 +6,7 @@
 						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
     <!--一下页面不被拦截-->
-    <http pattern="/login.html" security="none"></http>
+    <http pattern="/*.html" security="none"></http>
     <http pattern="/css/**" security="none"></http>
     <http pattern="/img/**" security="none"></http>
     <http pattern="/js/**" security="none"></http>
@@ -15,7 +15,10 @@
     <!--拦截页面规则-->
     <http use-expressions="false">
         <intercept-url pattern="/**" access="ROLE_ADMIN"/>
-        <form-login login-page="/login.html" default-target-url="/admin/index.html" authentication-failure-url="/login.html" always-use-default-target="true"/>
+        <form-login login-page="/login.html"
+                    default-target-url="/admin/index.html"
+                    authentication-failure-url="/login.html"
+                    always-use-default-target="true"/>
         <csrf disabled="true"/>
         <headers>
             <frame-options policy="SAMEORIGIN"/>

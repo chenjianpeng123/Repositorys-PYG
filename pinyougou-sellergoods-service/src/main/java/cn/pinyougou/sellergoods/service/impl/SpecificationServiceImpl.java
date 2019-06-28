@@ -117,7 +117,6 @@ public class SpecificationServiceImpl implements SpecificationService {
 			//删除规格表
 			specificationMapper.deleteByPrimaryKey(id);
 
-
 			//删除规格选项表
 			TbSpecificationOptionExample example = new TbSpecificationOptionExample();
 			TbSpecificationOptionExample.Criteria criteria = example.createCriteria();
