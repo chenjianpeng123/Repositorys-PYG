@@ -8,12 +8,12 @@ import java.io.Serializable;
 public class Result implements Serializable {
 
     private boolean success;//是否成功
-    private String massage;//返回的信息
+    private String message;//返回的信息
 
-    public Result(boolean success, String massage) {
+    public Result(boolean success, String message) {
         super();
         this.success = success;
-        this.massage = massage;
+        this.message = message;
     }
 
     public boolean isSuccess() {
@@ -24,11 +24,11 @@ public class Result implements Serializable {
         this.success = success;
     }
 
-    public String getMassage() {
-        return massage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setMassage(String massage) {
-        this.massage = massage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

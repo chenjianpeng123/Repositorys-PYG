@@ -113,7 +113,7 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 	 * @return
 	 */
 	@Override
-	public List<Map> selectTypetempList() {
-		return typeTemplateMapper.selectTypetempList();
+	public List<Map> selectTypeTemplateList() {
+		return typeTemplateMapper.selectTypeTemplateList();
 	}
 }

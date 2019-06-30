@@ -44,7 +44,7 @@ public interface ItemCatService {
 	 * @param id
 	 * @return
 	 */
-	public ItemCat findOne(Long id);
+	public TbItemCat findOne(Long id);
 	
 	
 	/**

@@ -1,9 +1,12 @@
 package cn.pinyougou.pojogroup;
 
-import cn.pinyougou.pojo.TbItemCat;
+
+
 import cn.pinyougou.pojo.TbTypeTemplate;
 
 import java.io.Serializable;
+
+;
 
 public class ItemCat implements Serializable {
 

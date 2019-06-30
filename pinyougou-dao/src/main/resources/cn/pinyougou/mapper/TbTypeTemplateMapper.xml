@@ -100,6 +100,7 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.pinyougou.pojo.TbTypeTemplate" >
+
     insert into tb_type_template (id, name, spec_ids, 
       brand_ids, custom_attribute_items)
     values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{specIds,jdbcType=VARCHAR}, 
@@ -209,7 +210,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-  <select id="selectTypetempList" resultType="java.util.Map">
+  <select id="selectTypeTemplateList" resultType="java.util.Map">
     select id ,name as text from tb_type_template
   </select>
 </mapper>

@@ -2,7 +2,7 @@
 app.controller('itemCatController', function ($scope, $controller, itemCatService, typeTemplateService) {
 
     $controller('baseController', {$scope: $scope});//继承
-    $scope.typeTemplate={};
+
     //读取列表数据绑定到表单中  
     $scope.findAll = function () {
         itemCatService.findAll().success(
@@ -115,7 +115,7 @@ app.controller('itemCatController', function ($scope, $controller, itemCatServic
     $scope.typeTemplateList = {data: []};
     //读取
     $scope.findTypeTemplateList=function () {
-        typeTemplateService.selectTypetempList().success(
+        typeTemplateService.selectTypeTemplateList().success(
             function (response) {
                 $scope.typeTemplateList={data:response};
             }

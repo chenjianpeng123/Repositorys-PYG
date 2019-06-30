@@ -63,5 +63,5 @@ public interface TypeTemplateService {
 	 * 品牌下拉列表
 	 * @return
 	 */
-	public List<Map> selectTypetempList();
+	public List<Map> selectTypeTemplateList();
 }

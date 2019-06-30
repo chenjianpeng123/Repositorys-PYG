@@ -30,7 +30,7 @@ app.service('typeTemplateService',function($http){
 		return $http.post('../typeTemplate/search.do?page='+page+"&rows="+rows, searchEntity);
 	} 
 	//下拉列表数据
-	this.selectTypetempList=function () {
-		return $http.get("../typeTemplate/selectTypetempList.do")
+	this.selectTypeTemplateList=function () {
+		return $http.get("../typeTemplate/selectTypeTemplateList.do")
 	}
 });

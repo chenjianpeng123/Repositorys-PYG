@@ -52,10 +52,13 @@ public class GoodsServiceImpl implements GoodsService {
      */
     @Override
     public void add(Goods goods) {
-        goods.getGoods().setAuditStatus("0");//设置为申请的状态
+        //设置为申请的状态
+        goods.getGoods().setAuditStatus("0");
         goodsMapper.insert(goods.getGoods());
-        goods.getGoodsDesc().setGoodsId(goods.getGoods().getId());//设置id
-        goodsDescMapper.insert(goods.getGoodsDesc());//插入商品扩展数据
+        //设置id
+        goods.getGoodsDesc().setGoodsId(goods.getGoods().getId());
+        //插入商品扩展数据
+        goodsDescMapper.insert(goods.getGoodsDesc());
     }
 
 
