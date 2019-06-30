@@ -81,7 +81,7 @@ public class ItemCatController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbItemCat findOne(Long id){
+	public ItemCat findOne(Long id){
 		return itemCatService.findOne(id);		
 	}
 	

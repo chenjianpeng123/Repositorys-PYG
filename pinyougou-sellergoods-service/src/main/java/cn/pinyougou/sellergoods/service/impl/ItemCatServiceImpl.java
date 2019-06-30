@@ -80,15 +80,15 @@ public class ItemCatServiceImpl implements ItemCatService {
      * @return
      */
     @Override
-    public TbItemCat findOne(Long id) {
-//        TbItemCat tbItemCat = itemCatMapper.selectByPrimaryKey(id);
-//        ItemCat itemCat = new ItemCat();
-//        itemCat.setId(tbItemCat.getId());
-//        itemCat.setName(tbItemCat.getName());
-//        itemCat.setParentId(tbItemCat.getParentId());
-//        itemCat.setTypeTemplate(tbTypeTemplateMapper.selectByPrimaryKey(tbItemCat.getTypeId()));
-//        return itemCat;
-        return itemCatMapper.selectByPrimaryKey(id);
+    public ItemCat findOne(Long id) {
+        TbItemCat tbItemCat = itemCatMapper.selectByPrimaryKey(id);
+        ItemCat itemCat = new ItemCat();
+        itemCat.setId(tbItemCat.getId());
+        itemCat.setName(tbItemCat.getName());
+        itemCat.setParentId(tbItemCat.getParentId());
+        itemCat.setTypeTemplate(tbTypeTemplateMapper.selectByPrimaryKey(tbItemCat.getTypeId()));
+        return itemCat;
+       // return itemCatMapper.selectByPrimaryKey(id);
     }
 
     /**

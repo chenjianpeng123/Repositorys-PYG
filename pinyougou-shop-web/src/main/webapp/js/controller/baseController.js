@@ -26,16 +26,29 @@ app.controller('baseController', function ($scope) {
         }
     };
     //提取json字符串数据中的数据 返回拼接字符串 逗号隔开
-    $scope.jsonToString = function (jsonString,key){
+    $scope.jsonToString = function (jsonString, key) {
         var json = JSON.parse(jsonString);//将json字符串转换为json对象
         var value = "";
         for (var i = 0; i < json.length; i++) {
-            if(i>0){
-                value+=",";
+            if (i > 0) {
+                value += ",";
             }
             value += json[i][key];
         }
         return value;
+    }
+    //从集合中按照key查询对象
+    $scope.searchObjectByKey = function (list, key, keyValue) {
+        //遍历集合
+        for (var i = 0; i < list.length; i++) {
+            //判断集合中是否有对应的值
+            if (list[i][key] == keyValue) {
+                //返回查到的值
+                return list[i];
+            }
+        }
+        //如果没查到返回null
+        return null;
     }
 });
     
