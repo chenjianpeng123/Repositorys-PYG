@@ -11,6 +11,7 @@ import cn.pinyougou.pojo.TbItem;
 import cn.pinyougou.sellergoods.service.ItemService;
 
 import entity.PageResult;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 服务实现层
@@ -18,6 +19,7 @@ import entity.PageResult;
  *
  */
 @Service
+@Transactional
 public class ItemServiceImpl implements ItemService {
 
 	@Autowired

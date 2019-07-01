@@ -70,7 +70,15 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbGoods goods){
+	public Result update(@RequestBody Goods goods){
+		//校验是否是当前商家的id
+		Goods goods1 = goodsService.findOne(goods.getGoods().getId());
+		//获取当前登录的商家id
+		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
+		//判断 如果传递的id并不是当前登陆的id则是非法操作
+		if(!goods1.getGoods().getSellerId().equals(sellerId) || !goods.getGoods().getSellerId().equals(sellerId)){
+			return new Result(false,"非法操作");
+		}
 		try {
 			goodsService.update(goods);
 			return new Result(true, "修改成功");
@@ -86,7 +94,7 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbGoods findOne(Long id){
+	public Goods findOne(Long id){
 		return goodsService.findOne(id);		
 	}
 	

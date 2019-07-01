@@ -19,6 +19,7 @@ import cn.pinyougou.pojo.TbTypeTemplate;
 
 
 import entity.PageResult;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 服务实现层
@@ -26,6 +27,7 @@ import entity.PageResult;
  * @author Administrator
  */
 @Service
+@Transactional
 public class TypeTemplateServiceImpl implements TypeTemplateService {
 
     @Autowired
@@ -137,7 +139,7 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
     public List<Map> findSpecList(Long id) {
         //查询模板
         TbTypeTemplate typeTemplate = typeTemplateMapper.selectByPrimaryKey(id);
-        //转换为Map集合
+        //获取模板中的规格json字符串通过JSON.parseArray 转换为Map集合
         List<Map> list = JSON.parseArray(typeTemplate.getSpecIds(), Map.class);
         //遍历
         for (Map map : list) {

@@ -34,10 +34,11 @@
     
 </head>
 
-<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController" ng-init="selectItemCat1List()">
+<body class="hold-transition skin-red sidebar-mini" ng-app="pinyougou" ng-controller="goodsController" ng-init="selectItemCat1List();findOne()">
 image_entity:{{image_entity}}
 entity.goods:{{entity.goods.brandId}}
-entity:{{entity.goodsDesc.specificationItems}}
+entity:{{entity.goodsDesc.specificationItems}}<br>
+{{entity.goodsDesc.specificationItems}}
             <!-- 正文区域 -->
             <section class="content">
 
@@ -129,9 +130,8 @@ entity:{{entity.goodsDesc.specificationItems}}
 		                           <div class="col-md-2 title rowHeight2x">售后服务</div>
 		                           <div class="col-md-10 data rowHeight2x">
 		                               <textarea rows="4"  class="form-control"   ng-model="entity.goodsDesc.saleService" placeholder="售后服务"></textarea>
-		                           </div>                        
-                                  
-                                    
+		                           </div>
+
                                 </div>
                             </div>
                             
@@ -201,11 +201,12 @@ entity:{{entity.goodsDesc.specificationItems}}
 					                        <div class="col-md-10 data">
 					                               
 					                            <span ng-repeat="option in pojo.options">
-					                            	<input  type="checkbox" ng-click="updateSpecAttribute($event,pojo.text,option.optionName);createItemList()">{{option.optionName}}
+													<!--ng-checked 判断复选框是否被勾选-->
+					                            	<input  type="checkbox" ng-click="updateSpecAttribute($event,pojo.text,option.optionName);createItemList()"
+															ng-checked="checkAttributeValue(pojo.text,option.optionName)">{{option.optionName}}
 					                            </span>
 					                        </div>
 		                                </div>
-
                                         entity:{{entity.itemList}}
 	                                </div>
 	
@@ -215,7 +216,6 @@ entity:{{entity.goodsDesc.specificationItems}}
 						                    <thead>
 						                        <tr>					                          
 												    <th class="sorting" ng-repeat="item in entity.goodsDesc.specificationItems">{{item.attributeName}}</th>
-
 
 												    <th class="sorting">价格</th>
 												    <th class="sorting">库存</th>
@@ -262,8 +262,8 @@ entity:{{entity.goodsDesc.specificationItems}}
                  	
                    </div>
                   <div class="btn-toolbar list-toolbar">
-				      <button class="btn btn-primary" ng-click="add()"><i class="fa fa-save"></i>保存</button>
-				      <button class="btn btn-default" >返回列表</button>
+				      <button class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i>保存</button>
+					  <a class="btn btn-default" href="goods.html">返回列表</a>
 				  </div>
 			
             </section>
