@@ -121,4 +121,24 @@ app.controller('itemCatController', function ($scope, $controller, itemCatServic
             }
         );
     }
+
+    //判断当前分类下时候从在子类
+    $scope.checkIsParent=function ($event, id) {
+        itemCatService.findByParentId(id).success(
+            function (response) {
+               // alert(response);
+                //判断response不为空 代表有下一级
+                if(response!=null && response.length>0){
+                    //将id从selectIDS删除
+                    var index = $scope.selectIds.indexOf(id);
+                    $scope.selectIds.splice(index,1);
+                    alert("当前分类存在下级分类，不能删除！")
+
+                    //取消checkBox选中
+                    $event.target.checked=false;
+                    return;
+                }
+            }
+        )
+    }
 });
