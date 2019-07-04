@@ -37,5 +37,18 @@ app.controller('baseController', function ($scope) {
         }
         return value;
     }
+    //从集合中按照key查询对象
+    $scope.searchObjectByKey = function (list, key, keyValue) {
+        //遍历集合
+        for (var i = 0; i < list.length; i++) {
+            //判断集合中是否有对应的值
+            if (list[i][key] == keyValue) {
+                //返回查到的值
+                return list[i];
+            }
+        }
+        //如果没查到返回null
+        return null;
+    }
 });
     

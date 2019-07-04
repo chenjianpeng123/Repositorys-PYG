@@ -84,7 +84,7 @@ public class GoodsServiceImpl implements GoodsService {
      * @param goods
      * @param item
      */
-    public void setItemValues(Goods goods, TbItem item) {
+    private void setItemValues(Goods goods, TbItem item) {
      //商品分类
         item.setGoodsId(goods.getGoods().getId());//商品SPU编号
         item.setSellerId(goods.getGoods().getSellerId());//商家编号
@@ -175,10 +175,9 @@ public class GoodsServiceImpl implements GoodsService {
         //获取商品扩展表
         TbGoodsDesc tbGoodsDesc = goodsDescMapper.selectByPrimaryKey(id);
         goods.setGoodsDesc(tbGoodsDesc);
-        //查询SKU商品列表
+        // 查询SKU商品列表 查询条件 商品id
         TbItemExample example = new TbItemExample();
         TbItemExample.Criteria criteria = example.createCriteria();
-        //查询条件 商品id
         criteria.andGoodsIdEqualTo(id);
         List<TbItem> itemList = itemMapper.selectByExample(example);
         goods.setItemList(itemList);

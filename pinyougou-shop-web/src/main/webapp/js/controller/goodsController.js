@@ -46,14 +46,13 @@ app.controller('goodsController', function ($scope, $controller, $location, good
                 for (var i = 0; i < $scope.entity.itemList.length; i++) {
                     //逐行转换
                     $scope.entity.itemList[i].spec = JSON.parse($scope.entity.itemList[i].spec);
-
                 }
             }
         );
     }
-       //保存
+    //保存
     $scope.save = function () {
-      //提取文本编辑器的值
+        //提取文本编辑器的值
         $scope.entity.goodsDesc.introduction = editor.html();
         var serviceObject;//服务层对象
         if ($scope.entity.goods.id != null) {//如果有 ID
@@ -65,7 +64,7 @@ app.controller('goodsController', function ($scope, $controller, $location, good
             function (response) {
                 if (response.success) {
                     alert('保存成功');
-                    location.href="goods.html";//跳转到商品列表
+                    location.href = "goods.html";//跳转到商品列表
                 } else {
                     alert(response.message);
                 }
@@ -206,35 +205,65 @@ app.controller('goodsController', function ($scope, $controller, $location, good
             $scope.entity.goodsDesc.specificationItems.push({"attributeName": name, "attributeValue": [value]});
         }
     }
+    // //创建SKU列表
+    // $scope.createItemList = function () {
+    //     //列表初始化
+    //     $scope.entity.itemList = [{spec: {}, price: 0, num: 99999, status: '0', isDefault: '0'}];
+    //     //定义规格选项集合
+    //     var items = $scope.entity.goodsDesc.specificationItems;
+    //     for (var i = 0; i < items.length; i++) {
+    //         $scope.entity.itemList = addColumn($scope.entity.itemList, items[i].attributeName, items[i].attributeValue);
+    //     }
+    // }
+    // //克隆
+    // addColumn = function (list, columnName, columnValues) {
+    //     //定义新的集合
+    //     var newList = [];
+    //     //循环原本的集合得到每一个元素
+    //     for (var i = 0; i < list.length; i++) {
+    //         var oldRow = list[i];
+    //         for (var j = 0; j < columnValues.length; j++) {
+    //             var newRow = JSON.parse(JSON.stringify(oldRow));//深克隆
+    //             //添加属性
+    //             newRow.spec[columnName] = columnValues[j];
+    //             newList.push(newRow);
+    //         }
+    //     }
+    //
+    //     //返回新的集合
+    //     return newList;
+    // }
     //创建SKU列表
     $scope.createItemList = function () {
-        //列表初始化
-        $scope.entity.itemList = [{spec: {}, price: 0, num: 99999, status: '0', isDefault: '0'}];
-        //定义规格选项集合
+        // 1. 在entity中初始化sku集合
+        $scope.entity.itemList=[{spec:{}, price: 0, num: 99999, status: '0', isDefault: '0'}]
+        // 2. 获得所有勾选的规格集合
         var items = $scope.entity.goodsDesc.specificationItems;
-        for (var i = 0; i < items.length; i++) {
-            $scope.entity.itemList = addColumn($scope.entity.itemList, items[i].attributeName, items[i].attributeValue);
-        }
-    }
-    //克隆
-    addColumn = function (list, columnName, columnValues) {
-        //定义新的集合
-        var newList = [];
-        //循环原本的集合得到每一个元素
-        for (var i = 0; i < list.length; i++) {
-            var oldRow = list[i];
-            for (var j = 0; j < columnValues.length; j++) {
-                var newRow = JSON.parse(JSON.stringify(oldRow));//深克隆
-                //添加属性
-                newRow.spec[columnName] = columnValues[j];
-                newList.push(newRow);
+        // 3. 遍历规格集合
+        for (var i = 0; i <items.length ; i++) {
+            // 3.1 获得每个规格名称和选项数组
+            var specName = items[i].attributeName;
+            var optionValue = items[i].attributeValue;
+            // 3.2 定义新的sku集合
+            var newSkuList = [];
+            // 3.3 遍历entity中sku集合
+            for (var j = 0; j < $scope.entity.itemList.length; j++) {
+                // 3.3.1 获得每个sku对象
+                var oldSKU = $scope.entity.itemList[j];
+                // 3.3.3 遍历当前规格选项数组
+                for (var k = 0; k < optionValue.length; k++) {
+                    // 3.3.3.1 克隆原sku对象
+                    var newSKU = JSON.parse(JSON.stringify(oldSKU));
+                    // 3.3.3.1 规格和选项添加到克隆的sku对象
+                    newSKU.spec[specName]=optionValue[k];
+                    // 3.3.3.1 将新的sku对象添加到sku集合中
+                    newSkuList.push(newSKU);
+                }
             }
+            // 3.3.4 将entity中的sku集合替换为新的sku集合
+            $scope.entity.itemList=newSkuList;
         }
-
-        //返回新的集合
-        return newList;
     }
-
     //定义状态数组
     $scope.status = ['未审核', '已审核', '审核未通过', '关闭'];//商品状态
 

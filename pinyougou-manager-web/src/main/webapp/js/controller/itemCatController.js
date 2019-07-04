@@ -34,6 +34,10 @@ app.controller('itemCatController', function ($scope, $controller, itemCatServic
 
     //保存
     $scope.save = function () {
+        // //绑定parentId
+        // $scope.entity.parentId = $scope.parentId;
+        // //绑定typeId
+        // $scope.entity.typeId = $scope.entity.typeTemplate.typeId;
         var serviceObject;//服务层对象
         if ($scope.entity.id != null) {//如果有ID
             serviceObject = itemCatService.update($scope.entity); //修改
@@ -132,7 +136,7 @@ app.controller('itemCatController', function ($scope, $controller, itemCatServic
                     //将id从selectIDS删除
                     var index = $scope.selectIds.indexOf(id);
                     $scope.selectIds.splice(index,1);
-                    alert("当前分类存在下级分类，不能删除！")
+                    alert("当前分类存在下级分类，不能删除！");
 
                     //取消checkBox选中
                     $event.target.checked=false;

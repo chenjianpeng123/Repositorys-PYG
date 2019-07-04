@@ -23,6 +23,7 @@
 	<script type="text/javascript" src="../js/base_pagination.js"></script>
 	<script type="text/javascript" src="../js/service/goodsService.js"></script>
 	<script type="text/javascript" src="../js/service/itemCatService.js"></script>
+	<script type="text/javascript" src="../js/service/typeTemplateService.js"></script>
 	<script type="text/javascript" src="../js/controller/baseController.js"></script>
 	<script type="text/javascript" src="../js/controller/goodsController.js"></script>
 
@@ -53,8 +54,8 @@
                             </div>
                             <div class="box-tools pull-right">
                                 <div class="has-feedback">
-                                    商品名称：<input >
-									<button class="btn btn-default" >查询</button>                                    
+                                    商品名称：<input ng-model="searchEntity.goodsName">
+									<button class="btn btn-default" ng-click="reloadList()">查询</button>
                                 </div>
                             </div>
                             <!--工具栏/-->
@@ -89,7 +90,7 @@
 										  {{status[entity.auditStatus]}}
 									  </td>
 									  <td class="text-center">
-										  <a class="btn bg-olive btn-xs" href="goods_edit.html#?id={{entity.id}}">详情</a>
+										  <a class="btn bg-olive btn-xs" href="goods_Page.html#?id={{entity.id}}">详情</a>
 									  </td>
 								  </tr>
 			                      </tbody>
