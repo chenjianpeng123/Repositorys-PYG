@@ -1,12 +1,10 @@
 package cn.pinyougou.sellergoods.service.impl;
 
 import java.util.List;
-import java.util.Map;
+
 
 import cn.pinyougou.mapper.TbTypeTemplateMapper;
 import cn.pinyougou.pojo.TbItemCatExample;
-import cn.pinyougou.pojo.TbTypeTemplate;
-import cn.pinyougou.pojo.TbTypeTemplateExample;
 import cn.pinyougou.pojogroup.ItemCat;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -17,6 +15,7 @@ import cn.pinyougou.pojo.TbItemCat;
 import cn.pinyougou.sellergoods.service.ItemCatService;
 
 import entity.PageResult;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -32,6 +31,8 @@ public class ItemCatServiceImpl implements ItemCatService {
     private TbItemCatMapper itemCatMapper;
     @Autowired
     private TbTypeTemplateMapper tbTypeTemplateMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 查询全部
@@ -90,7 +91,7 @@ public class ItemCatServiceImpl implements ItemCatService {
         itemCat.setParentId(tbItemCat.getParentId());
         itemCat.setTypeTemplate(tbTypeTemplateMapper.selectByPrimaryKey(tbItemCat.getTypeId()));
         return itemCat;
-       // return itemCatMapper.selectByPrimaryKey(id);
+        // return itemCatMapper.selectByPrimaryKey(id);
     }
 
     /**
@@ -132,7 +133,16 @@ public class ItemCatServiceImpl implements ItemCatService {
     public List<TbItemCat> findByParentId(Long parentId) {
         TbItemCatExample catExample = new TbItemCatExample();
         TbItemCatExample.Criteria criteria = catExample.createCriteria();
+        //设置条件
         criteria.andParentIdEqualTo(parentId);
+        //每次执行查询的时候，一次性读取缓存进行存储 (因为每次增删改都要执行此方法)
+        //把模板id放入缓存以商品分类名称为key 模板id作为value
+        List<TbItemCat> itemCatList = findAll();
+        for (TbItemCat itemCat : itemCatList) {
+            redisTemplate.boundHashOps("itemCat").put(itemCat.getName(), itemCat.getTypeId());
+        }
+        System.out.println("更新缓存:商品分类表");
+        //条件查询
         return itemCatMapper.selectByExample(catExample);
     }
 

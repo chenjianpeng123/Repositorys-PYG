@@ -19,6 +19,7 @@ import cn.pinyougou.pojo.TbTypeTemplate;
 
 
 import entity.PageResult;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -34,6 +35,8 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
     private TbTypeTemplateMapper typeTemplateMapper;
     @Autowired
     private TbSpecificationOptionMapper specificationOptionMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 查询全部
@@ -116,7 +119,29 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
         }
 
         Page<TbTypeTemplate> page = (Page<TbTypeTemplate>) typeTemplateMapper.selectByExample(example);
+        //存入数据到缓存中  增删改后会自动调用该方法.
+          saveTORedis();
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+
+    /**
+     * 将规格列表和品牌列表数据放入缓存
+     */
+    private void saveTORedis() {
+        //获取所有模板列表
+        List<TbTypeTemplate> templateList = findAll();
+        for (TbTypeTemplate typeTemplate : templateList) {
+            //将品牌列表数据转换为map集合  存储品牌列表数据 模板id为key 品牌列表为value
+            List<Map> brandList = JSON.parseArray(typeTemplate.getBrandIds(), Map.class);
+            redisTemplate.boundHashOps("brandList").put(typeTemplate.getId(),brandList);
+            //调用findSpecList方法获取规格选项列表
+            List<Map> specList = findSpecList(typeTemplate.getId());
+            //将规格选项列表上数据放入缓存中 以模板id为key 以规格选项列表为value
+            redisTemplate.boundHashOps("specList").put(typeTemplate.getId(),specList);
+        }
+        System.out.println("将品牌列表数据和将规格列表数据放入缓存");
+
     }
 
     /**
@@ -147,7 +172,7 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
             TbSpecificationOptionExample example = new TbSpecificationOptionExample();
             TbSpecificationOptionExample.Criteria criteria = example.createCriteria();
             //把id转换为Long类型
-            criteria.andSpecIdEqualTo( new Long( (Integer)map.get("id") ) );
+            criteria.andSpecIdEqualTo(new Long((Integer) map.get("id")));
             //获取出规格选项列表
             List<TbSpecificationOption> options = specificationOptionMapper.selectByExample(example);
             map.put("options", options);
