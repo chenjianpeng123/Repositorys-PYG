@@ -10,7 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/itemSearch")
-public class TtemSearchController {
+public class ItemSearchController {
 
     @Reference
     private ItemSearchService itemSearchService;

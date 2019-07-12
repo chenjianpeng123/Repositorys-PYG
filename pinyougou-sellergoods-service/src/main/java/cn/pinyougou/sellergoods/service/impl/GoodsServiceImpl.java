@@ -1,6 +1,8 @@
 package cn.pinyougou.sellergoods.service.impl;
 
 import java.io.Serializable;
+import java.sql.Array;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import com.alibaba.druid.sql.ast.expr.SQLCaseExpr;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.xml.internal.xsom.impl.scd.Iterators;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
@@ -85,13 +88,13 @@ public class GoodsServiceImpl implements GoodsService {
      * @param item
      */
     private void setItemValues(Goods goods, TbItem item) {
-     //商品分类
+        //商品分类
         item.setGoodsId(goods.getGoods().getId());//商品SPU编号
         item.setSellerId(goods.getGoods().getSellerId());//商家编号
         item.setCategoryid(goods.getGoods().getCategory3Id());//商品三级分类编号
         item.setCreateTime(new Date());//创建日期
         item.setUpdateTime(new Date());//修改日期
-       //分类名称
+        //分类名称
         //根据商品分类id查询商品名称
         TbItemCat tbItemCat = itemCatMapper.selectByPrimaryKey(goods.getGoods().getCategory3Id());
         item.setCategory(tbItemCat.getName());
@@ -110,10 +113,11 @@ public class GoodsServiceImpl implements GoodsService {
 
     /**
      * 抽取 ：插入SKU列表数据
+     *
      * @param goods
      */
     public void saveItemList(Goods goods) {
-   //判断是否启用规格
+        //判断是否启用规格
         if ("1".equals(goods.getGoods().getIsEnableSpec())) {
             //获取规格数据列表集合 遍历集合
             for (TbItem item : goods.getItemList()) {
@@ -206,7 +210,7 @@ public class GoodsServiceImpl implements GoodsService {
 
         TbGoodsExample example = new TbGoodsExample();
         TbGoodsExample.Criteria criteria = example.createCriteria();
-         //排除已删除的
+        //排除已删除的
         criteria.andIsDeleteIsNull();
         if (goods != null) {
             if (goods.getSellerId() != null && goods.getSellerId().length() > 0) {
@@ -244,6 +248,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     /**
      * 修改状态
+     *
      * @param ids
      * @param status
      */
@@ -260,4 +265,22 @@ public class GoodsServiceImpl implements GoodsService {
         }
     }
 
+    /**
+     * 根据商品id和状态查询商品列表
+     *
+     * @param goodsIds
+     * @param status
+     * @return
+     */
+    @Override
+    public List<TbItem> findItemListByGoodsIdAndStatus(Long[] goodsIds, String status) {
+        TbItemExample example = new TbItemExample();
+        TbItemExample.Criteria criteria = example.createCriteria();
+        //审核状态
+        criteria.andStatusEqualTo(status);
+        //将商品id转换为list集合 因为有多个商品id
+        criteria.andGoodsIdIn(Arrays.asList(goodsIds));
+        List<TbItem> list = itemMapper.selectByExample(example);
+        return list;
+    }
 }

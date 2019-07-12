@@ -1,5 +1,6 @@
 package cn.pinyougou.search.service;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ItemSearchService {
@@ -10,4 +11,16 @@ public interface ItemSearchService {
      * @return Map        后台返回给前台的搜索结果也包含多种类型
      */
     public Map<String, Object> search(Map searchMap);
+
+    /**
+     * 导入商品列表数据
+     * @param list
+     */
+    public void importList(List list);
+
+    /**
+     * 删除数据
+     * @param goodsIdList
+     */
+    public void deleteByGoodsIds(List goodsIdList);
 }
