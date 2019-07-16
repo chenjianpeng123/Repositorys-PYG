@@ -1,12 +1,16 @@
 package cn.pinyougou.manager.controller;
 
-import java.util.Arrays;
+
 import java.util.List;
 
-import cn.pinyougou.page.service.ItemPageService;
+
 import cn.pinyougou.pojo.TbItem;
 import cn.pinyougou.pojogroup.Goods;
-import cn.pinyougou.search.service.ItemSearchService;
+import com.alibaba.fastjson.JSON;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +20,8 @@ import cn.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
 import entity.Result;
+
+import javax.jms.*;
 
 /**
  * controller
@@ -28,10 +34,11 @@ public class GoodsController {
 
     @Reference
     private GoodsService goodsService;
-    @Reference(timeout = 100000)
-    private ItemSearchService itemSearchService;
-    @Reference(timeout = 400000)
-    private ItemPageService itemPageService;
+    //    @Reference(timeout = 100000)
+//    private ItemSearchService itemSearchService;
+//    @Reference(timeout = 400000)
+//    private ItemPageService itemPageService;
+
 
     /**
      * 返回全部列表
@@ -98,6 +105,13 @@ public class GoodsController {
         return goodsService.findOne(id);
     }
 
+    @Autowired
+    @Qualifier("queueSolrDeleteDestination")
+    private Destination queueSolrDeleteDestination;//删除solr索引库 点对点
+
+    @Autowired
+    @Qualifier("topicPageDeleteDestination")
+    private Destination topicPageDeleteDestination;//删除生成的静态页面
     /**
      * 批量删除
      *
@@ -105,10 +119,26 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/delete")
-    public Result delete(Long[] ids) {
+    public Result delete(final Long[] ids) {
         try {
             goodsService.delete(ids);
-            itemSearchService.deleteByGoodsIds(Arrays.asList(ids));
+//            itemSearchService.deleteByGoodsIds(Arrays.asList(ids));
+            //删除索引库数据
+            jmsTemplate.send(queueSolrDeleteDestination, new MessageCreator() {
+                @Override
+                public Message createMessage(Session session) throws JMSException {
+                    ObjectMessage objectMessage = session.createObjectMessage(ids);
+                    return objectMessage;
+                }
+            });
+            //删除静态页面
+            jmsTemplate.send(topicPageDeleteDestination, new MessageCreator() {
+                @Override
+                public Message createMessage(Session session) throws JMSException {
+                    ObjectMessage objectMessage = session.createObjectMessage(ids);
+                    return objectMessage;
+                }
+            });
             return new Result(true, "删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,6 +159,17 @@ public class GoodsController {
         return goodsService.findPage(goods, page, rows);
     }
 
+
+    @Autowired
+    private JmsTemplate jmsTemplate;
+
+    @Autowired
+    @Qualifier("queueSolrDestination")
+    private Destination queueSolrDestination;//用于发送solr导入的消息（点对点）
+    @Autowired
+    @Qualifier("topicPageDestination")
+    private Destination topicPageDestination;//生成商品详情静态页  （发布订阅）
+
     /**
      * 更新状态
      *
@@ -146,13 +187,31 @@ public class GoodsController {
                 List<TbItem> itemList = goodsService.findItemListByGoodsIdAndStatus(ids, status);
                 if (itemList.size() > 0) {
                     //导入数据到solr
-                    itemSearchService.importList(itemList);
+                    // itemSearchService.importList(itemList);
+                    final String jsonString = JSON.toJSONString(itemList);//将数据转换为json字符串
+
+                    jmsTemplate.send(queueSolrDestination, new MessageCreator() {
+                        @Override
+                        public Message createMessage(Session session) throws JMSException {
+                            TextMessage textMessage = session.createTextMessage(jsonString);
+                            return textMessage;
+                        }
+                    });
                 } else {
                     System.out.println("没有数据！！！");
                 }
                 //静态页面生成
-                for (Long goodsId : ids) {
-                    itemPageService.genItemHtml(goodsId);
+                for (final Long goodsId : ids) {
+//                    itemPageService.genItemHtml(goodsId);
+
+                    jmsTemplate.send(topicPageDestination, new MessageCreator() {
+                        @Override
+                        public Message createMessage(Session session) throws JMSException {
+//                           //发送的消息是文本类型
+                            TextMessage textMessage = session.createTextMessage(goodsId + "");
+                            return textMessage;
+                        }
+                    });
                 }
             }
             return new Result(true, "成功");
@@ -162,13 +221,14 @@ public class GoodsController {
         }
     }
 
-    /**
-     * 生成静态页（测试）
-     * @param goodsId
-     */
-    @RequestMapping("/genHtml")
+    ///**
+//     * 生成静态页（测试）
+//     *
+//     * @param goodsId
+//     */
+//    @RequestMapping("/genHtml")
     public void genHtml(Long goodsId) {
-        itemPageService.genItemHtml(goodsId);
+//     itemPageService.genItemHtml(goodsId);
     }
 
 
