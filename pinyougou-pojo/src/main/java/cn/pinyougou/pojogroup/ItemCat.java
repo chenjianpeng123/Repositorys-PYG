@@ -6,7 +6,6 @@ import cn.pinyougou.pojo.TbTypeTemplate;
 
 import java.io.Serializable;
 
-;
 
 public class ItemCat implements Serializable {
 
